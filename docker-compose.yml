@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+
+  mysql_db:
+    build: ./mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - 3300:3306
+
+  php:
+    build: ./php
+    ports:
+      - '8000:80'
+    volumes:
+      - ../:/var/www
+      - ../webroot:/var/www/html
+    links:
+      - mysql_db:db
+    depends_on:
+      - mysql_db
+
+  admin:
+    image: "phpmyadmin/phpmyadmin"
+    ports:
+      - '8080:80'
+    links:
+      - mysql_db:db
+    depends_on:
+      - mysql_db
+
+volumes:
+  db:
